@@ -1,0 +1,10 @@
+{
+  "name": "dealer-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "description": "荷官专属全能工作台 Web 应用（新客导入 + 转化 + AI 助手）",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

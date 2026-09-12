@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>荷官全能工作台</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">♠</div>
+        <div>
+          <div class="name">荷官全能工作台</div>
+          <div class="sub">Dealer Workbench</div>
+        </div>
+      </div>
+      <nav class="nav" id="nav">
+        <a class="nav-link" data-view="overview"><span class="ic">▣</span>总览</a>
+        <a class="nav-link" data-view="leads"><span class="ic">☰</span>新客台账</a>
+        <a class="nav-link" data-view="scripts"><span class="ic">✆</span>话术库</a>
+        <a class="nav-link" data-view="ai"><span class="ic">✦</span>AI 助手<span class="badge">AI</span></a>
+        <a class="nav-link" data-view="auto"><span class="ic">⟳</span>自动化</a>
+      </nav>
+      <div class="side-foot">
+        <div class="tag"><span class="dot"></span>实时接单已开启</div>
+        <div>合规模式 · 休闲娱乐/赛事/教学</div>
+      </div>
+    </aside>
+    <main class="main" id="view"></main>
+  </div>
+
+  <div class="modal-mask" id="modal">
+    <div class="modal" id="modal-box"></div>
+  </div>
+  <div id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
