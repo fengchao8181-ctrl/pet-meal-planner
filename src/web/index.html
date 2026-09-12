@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#D61F69">
+  <title>宠物餐单定制 · 问诊建档</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="logo">🐾 宠物餐单定制</span>
+      <span class="step-badge" id="stepBadge">1 / 3</span>
+    </div>
+    <div class="steps" aria-hidden="true">
+      <span class="step-dot active" data-step="1"></span>
+      <span class="step-dot" data-step="2"></span>
+      <span class="step-dot" data-step="3"></span>
+    </div>
+  </header>
+
+  <main class="page">
+    <p id="errorBar" class="error-bar" hidden></p>
+
+    <!-- 步骤 1：宠物档案 -->
+    <section class="card step-panel" id="step1">
+      <h1 class="panel-title">先建一份宠物档案</h1>
+      <p class="panel-sub">回答越多，餐单越准。约 1 分钟。</p>
+      <form id="profileForm" class="form-grid">
+        <label class="field">
+          <span>宠物昵称</span>
+          <input name="petName" type="text" placeholder="如：豆豆" maxlength="20">
+        </label>
+        <label class="field">
+          <span>品种</span>
+          <input name="breed" type="text" placeholder="如：金毛 / 中华田园犬" maxlength="20">
+        </label>
+        <label class="field">
+          <span>体重（kg）</span>
+          <input name="weightKg" type="number" inputmode="decimal" step="0.1" min="0.5" max="80" placeholder="如：8.5" required>
+        </label>
+        <label class="field">
+          <span>月龄</span>
+          <input name="ageMonths" type="number" inputmode="numeric" min="1" max="240" placeholder="如：24" required>
+        </label>
+        <label class="field">
+          <span>生命阶段</span>
+          <select name="lifeStage" required>
+            <option value="puppy">幼犬（1 岁以下）</option>
+            <option value="adult" selected>成犬（1-7 岁）</option>
+            <option value="senior">老年犬（7 岁以上）</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>活动量</span>
+          <select name="activity" required>
+            <option value="low">低（宅家为主）</option>
+            <option value="mid" selected>中（每日散步）</option>
+            <option value="high">高（运动犬）</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>是否绝育</span>
+          <select name="neutered" required>
+            <option value="true">已绝育</option>
+            <option value="false">未绝育</option>
+          </select>
+        </label>
+        <fieldset class="field field--full">
+          <legend>已知过敏史（可多选）</legend>
+          <div class="chips" id="allergyChips">
+            <label class="chip"><input type="checkbox" name="allergies" value="牛肉">牛肉</label>
+            <label class="chip"><input type="checkbox" name="allergies" value="鸡肉">鸡肉</label>
+            <label class="chip"><input type="checkbox" name="allergies" value="鱼肉">鱼肉</label>
+            <label class="chip"><input type="checkbox" name="allergies" value="谷物">谷物</label>
+            <label class="chip"><input type="checkbox" name="allergies" value="乳制品">乳制品</label>
+            <label class="chip"><input type="checkbox" name="allergies" value="鸡蛋">鸡蛋</label>
+          </div>
+        </fieldset>
+        <button type="submit" class="btn btn--primary btn--full">下一步：选择喂养方式</button>
+      </form>
+    </section>
+
+    <!-- 步骤 2：喂养模式 + 主粮标签 -->
+    <section class="card step-panel" id="step2" hidden>
+      <h1 class="panel-title">选择喂养方式</h1>
+      <p class="panel-sub">三档并行：不换粮也能用，辅食不超每日热量 10%。</p>
+      <div class="mode-cards" id="modeCards">
+        <button type="button" class="mode-card" data-mode="B">
+          <strong>狗粮 + 辅食</strong>
+          <span>不换主粮，按类型建议选粮 + 每周辅食配方</span>
+          <em>门槛最低 · 推荐</em>
+        </button>
+        <button type="button" class="mode-card" data-mode="C">
+          <strong>混合喂养</strong>
+          <span>狗粮为主 + 每周 2-4 顿鲜食</span>
+          <em>进阶</em>
+        </button>
+        <button type="button" class="mode-card" data-mode="A">
+          <strong>纯鲜食</strong>
+          <span>全餐鲜食，每日配方</span>
+          <em>全换粮</em>
+        </button>
+      </div>
+
+      <form id="labelForm" class="form-grid" hidden>
+        <p class="panel-sub field--full">主粮标签信息（拍包装背面保证值，没有可留空，按类型选）</p>
+        <label class="field">
+          <span>粗蛋白 %</span>
+          <input name="proteinPct" type="number" inputmode="decimal" step="0.1" min="1" max="60" placeholder="如 30">
+        </label>
+        <label class="field">
+          <span>粗脂肪 %</span>
+          <input name="fatPct" type="number" inputmode="decimal" step="0.1" min="1" max="40" placeholder="如 16">
+        </label>
+        <label class="field">
+          <span>粗纤维 %</span>
+          <input name="fiberPct" type="number" inputmode="decimal" step="0.1" min="0" max="20" placeholder="如 4">
+        </label>
+        <label class="field">
+          <span>热量 kcal/100g</span>
+          <input name="kcalPer100g" type="number" inputmode="numeric" min="100" max="600" placeholder="如 380">
+        </label>
+        <label class="chip chip--full field--full"><input type="checkbox" name="grainFree"> 无谷粮</label>
+        <fieldset class="field field--full">
+          <legend>想避开的蛋白源（可多选）</legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="avoid" value="牛肉">牛肉</label>
+            <label class="chip"><input type="checkbox" name="avoid" value="鸡肉">鸡肉</label>
+            <label class="chip"><input type="checkbox" name="avoid" value="鱼肉">鱼肉</label>
+            <label class="chip"><input type="checkbox" name="avoid" value="谷物">谷物</label>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="actions">
+        <button type="button" class="btn btn--ghost" id="backToStep1">上一步</button>
+        <button type="button" class="btn btn--primary" id="generateBtn">生成我的餐单</button>
+      </div>
+    </section>
+
+    <!-- 步骤 3：结果 -->
+    <section class="card step-panel" id="step3" hidden>
+      <div id="planResult"></div>
+      <button type="button" class="btn btn--ghost btn--full" id="restartBtn">重新建档</button>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
