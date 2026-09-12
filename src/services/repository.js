@@ -6,4 +6,6 @@ export class Repository {
   async getProfile(id) { throw new Error('not implemented'); }
   async savePlan(plan) { throw new Error('not implemented'); }
   async getPlan(id) { throw new Error('not implemented'); }
+  async saveOrder(order) { throw new Error('not implemented'); }
+  async getOrder(id) { throw new Error('not implemented'); }
 }

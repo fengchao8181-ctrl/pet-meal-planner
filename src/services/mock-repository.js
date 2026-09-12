@@ -6,6 +6,7 @@ export class MockRepository extends Repository {
     super();
     this.profiles = new Map();
     this.plans = new Map();
+    this.orders = new Map();
   }
 
   async saveProfile(profile) {
@@ -25,5 +26,14 @@ export class MockRepository extends Repository {
 
   async getPlan(id) {
     return this.plans.get(id) || null;
+  }
+
+  async saveOrder(order) {
+    this.orders.set(order.id, order);
+    return order.id;
+  }
+
+  async getOrder(id) {
+    return this.orders.get(id) || null;
   }
 }

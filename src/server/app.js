@@ -7,10 +7,15 @@ import { createServer } from 'node:http';
 import { buildProfile } from '../domain/profile.js';
 import { generateMealPlan } from '../domain/meal-plan.js';
 import { getRuleInfo } from '../domain/rules-engine.js';
+import { createOrder, applyOrderEvent } from '../domain/order.js';
+import { listSkus } from '../domain/subscription.js';
 import { MockRepository } from '../services/mock-repository.js';
+import { StubPaymentProvider } from '../services/payment-provider.js';
 
 const WEB_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'web');
 const repo = new MockRepository();
+// 支付提供方：联调/0 代码兜底用 StubPaymentProvider；接入微信支付时替换为 WeChatPaymentProvider（M2.02，需商户号）
+const payment = new StubPaymentProvider();
 
 const STATIC_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -63,9 +68,51 @@ export async function handler(request) {
       return json({ ok: true, plan });
     }
 
+    // M1.02 三端共享读取：同一餐单同一 ID 同数据（GET /api/plans/:id）
+    if (request.method === 'GET' && pathname.startsWith('/api/plans/')) {
+      const id = decodeURIComponent(pathname.split('/')[3]);
+      const plan = await repo.getPlan(id);
+      if (!plan) return json({ ok: false, error: '餐单不存在' }, 404);
+      return json({ ok: true, plan });
+    }
+
+    // 订阅 SKU 列表
+    if (request.method === 'GET' && pathname === '/api/skus') {
+      return json({ ok: true, skus: listSkus() });
+    }
+
+    // M2.01 创建订阅订单（5 态状态机起点：pending）
+    if (request.method === 'POST' && pathname === '/api/orders') {
+      const body = await request.json();
+      const order = createOrder(body);
+      const pay = await payment.createPayment(order);
+      await repo.saveOrder(order);
+      return json({ ok: true, order, payment: pay }, 201);
+    }
+
+    // M2.02 支付回调（幂等：重复回调不重复迁移/入账）
+    if (request.method === 'POST' && pathname.startsWith('/api/orders/') && pathname.endsWith('/pay-callback')) {
+      const id = decodeURIComponent(pathname.split('/')[3]);
+      const order = await repo.getOrder(id);
+      if (!order) return json({ ok: false, error: '订单不存在' }, 404);
+      const cb = await payment.verifyCallback(await request.json());
+      if (cb.status === 'success' && cb.paymentId) {
+        applyOrderEvent(order, 'pay', { paymentId: cb.paymentId });
+        await repo.saveOrder(order);
+      }
+      return json({ ok: true, order });
+    }
+
+    if (request.method === 'GET' && pathname.startsWith('/api/orders/')) {
+      const id = decodeURIComponent(pathname.split('/')[3]);
+      const order = await repo.getOrder(id);
+      if (!order) return json({ ok: false, error: '订单不存在' }, 404);
+      return json({ ok: true, order });
+    }
+
     return json({ ok: false, error: 'not found' }, 404);
   } catch (err) {
-    const status = err.code === 'PROFILE_INVALID' ? 400 : 500;
+    const status = err.code === 'PROFILE_INVALID' || err.code === 'SKU_NOT_FOUND' || err.code === 'CALLBACK_INVALID' ? 400 : 500;
     return json({ ok: false, error: err.message, code: err.code || 'INTERNAL' }, status);
   }
 }
