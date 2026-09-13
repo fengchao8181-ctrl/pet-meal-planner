@@ -1,0 +1,67 @@
+<view class="page">
+  <view wx:if="{{error}}" class="error-bar">{{error}}</view>
+
+  <!-- 顶部优惠 / 稀缺感 banner -->
+  <view class="offer-banner" wx:if="{{bannerTitle}}">
+    <text class="offer-title">{{bannerTitle}}</text>
+    <text class="offer-sub">{{bannerSub}}</text>
+  </view>
+
+  <view class="card">
+    <view class="panel-title">挑选订阅方案</view>
+    <view class="panel-sub">数字订阅：月餐单 + 辅食 + 日提醒，随时退订。</view>
+
+    <!-- SKU 列表 -->
+    <view class="mode-cards" style="margin-top:8rpx">
+      <view wx:for="{{skus}}" wx:key="id"
+            class="mode-card {{selectedId == item.id ? 'on' : ''}}"
+            data-id="{{item.id}}" bindtap="onSelect">
+        <view class="row">
+          <text class="m-name">{{item.name}}</text>
+          <view class="price">
+            <text class="p-orig" wx:if="{{item.origText}}">{{item.origText}}</text>
+            <text class="p-yuan">{{item.priceText}}</text>
+            <text class="p-per">{{item.perPriceText}}</text>
+          </view>
+        </view>
+        <text class="m-desc">{{item.desc}}</text>
+        <view class="m-tag-row">
+          <view class="m-tag" wx:if="{{item.perks.length}}">{{item.perksText}}</view>
+          <view class="m-tag m-badge" wx:if="{{item.discountText}}">{{item.discountText}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 下单人 -->
+    <view class="f-item" style="margin-top:24rpx">
+      <text class="f-label">联系人昵称（可选）</text>
+      <input value="{{memberName}}" bindinput="onNameInput" maxlength="20" placeholder="宠物家长" />
+    </view>
+
+    <button class="btn btn-primary btn-full" bindtap="onCreateOrder" hover-class="btn-hover"
+            disabled="{{loading || !selected}}">{{loading ? '下单中…' : '创建订单'}}</button>
+  </view>
+
+  <!-- 信任条款，降低决策门槛 -->
+  <view class="card trust-card" style="margin-top:28rpx">
+    <view class="trust-item"><text class="trust-check">✓</text>7 天内不满意，随时可退订</view>
+    <view class="trust-item"><text class="trust-check">✓</text>喂养方式可随时调整，餐单跟着变</view>
+    <view class="trust-item"><text class="trust-check">✓</text>一次建档，终身可复用</view>
+  </view>
+
+  <!-- 订单状态 -->
+  <view class="card" wx:if="{{order}}" style="margin-top:28rpx">
+    <view class="panel-title" style="font-size:32rpx">订单 #{{order.displayId}}</view>
+    <view class="kcal-row" style="margin-top:16rpx">
+      <text>{{order.skuName}}</text>
+      <text class="kcal-val">{{status.label}}</text>
+    </view>
+    <view class="note" style="margin-top:0">金额 {{order.priceFen / 100}} 元 · 订阅周期 {{order.periodDays}} 天</view>
+    <button class="btn btn-primary btn-full" bindtap="onPay" hover-class="btn-hover"
+            disabled="{{paying || payDisabled}}">
+      {{paying ? '确认中…' : '模拟完成支付'
+      }}</button>
+  </view>
+
+  <button class="btn btn-ghost btn-full" bindtap="goBack">返回我的餐单</button>
+</view>

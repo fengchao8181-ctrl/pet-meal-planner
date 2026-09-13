@@ -1,0 +1,111 @@
+/* 小程序端：全局样式（对齐 H5 主色 #D61F69） */
+page {
+  --brand: #D61F69;
+  --brand-soft: #FBEAF1;
+  --bg: #FFF7FA;
+  --text: #2B2026;
+  --muted: #7A6872;
+  --border: #E8D8DF;
+  --danger: #C0392B;
+  --ok: #1E8449;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.page {
+  padding: 28rpx;
+}
+.card {
+  background: #fff;
+  border: 1rpx solid var(--border);
+  border-radius: 28rpx;
+  box-shadow: 0 4rpx 24rpx rgba(43, 32, 38, 0.07);
+  padding: 36rpx;
+}
+.panel-title { font-size: 40rpx; font-weight: 700; }
+.panel-sub { color: var(--muted); font-size: 26rpx; margin: 8rpx 0 28rpx; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24rpx; row-gap: 24rpx; }
+.f-item { display: flex; flex-direction: column; gap: 10rpx; }
+.f-label { font-size: 26rpx; color: var(--muted); }
+.f-full { grid-column: 1 / -1; }
+.f-item input, .f-item picker {
+  min-height: 88rpx; line-height: 88rpx;
+  border: 1rpx solid var(--border); border-radius: 20rpx;
+  padding: 0 24rpx; font-size: 30rpx;
+  background: #fff;
+}
+.f-item input.placeholder { color: #C9B8C0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8rpx;
+  border: 1rpx solid var(--border); border-radius: 999rpx;
+  padding: 12rpx 24rpx; font-size: 26rpx;
+}
+.chip.on { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+
+.btn {
+  border-radius: 24rpx; font-size: 30rpx; font-weight: 600;
+  padding: 0; display: flex; align-items: center; justify-content: center;
+  min-height: 92rpx;
+}
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-hover { opacity: 0.85; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1rpx solid var(--border); }
+.btn-full { width: 100%; margin-top: 24rpx; }
+.actions { display: flex; gap: 20rpx; margin-top: 28rpx; }
+.actions .btn { flex: 1; }
+
+.error-bar {
+  background: #FDECEA; color: var(--danger);
+  border: 1rpx solid #F5C6C0; border-radius: 24rpx;
+  padding: 18rpx 26rpx; font-size: 26rpx; margin-bottom: 24rpx;
+}
+
+.mode-cards { display: flex; flex-direction: column; gap: 20rpx; }
+.mode-card {
+  border: 3rpx solid var(--border); border-radius: 28rpx;
+  padding: 26rpx 30rpx; display: flex; flex-direction: column; gap: 8rpx;
+  background: #fff; text-align: left;
+}
+.mode-card .m-name { font-size: 32rpx; font-weight: 700; }
+.mode-card .m-desc { font-size: 26rpx; color: var(--muted); }
+.mode-card .m-tag {
+  align-self: flex-start; font-size: 24rpx; color: var(--brand);
+  background: var(--brand-soft); border-radius: 999rpx; padding: 4rpx 20rpx;
+}
+.mode-card.on { border-color: var(--brand); background: var(--brand-soft); }
+
+.kcal-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--brand-soft); border-radius: 20rpx;
+  padding: 20rpx 28rpx; margin-bottom: 24rpx; font-size: 28rpx;
+}
+.kcal-row .kcal-val { color: var(--brand); font-size: 36rpx; font-weight: 700; }
+.block { margin-top: 30rpx; }
+.block-title { font-size: 30rpx; font-weight: 700; margin-bottom: 16rpx; }
+.advice-card {
+  background: var(--brand-soft); border-radius: 20rpx;
+  padding: 22rpx 28rpx; font-size: 28rpx;
+}
+.advice-tips { margin: 12rpx 0 0 36rpx; }
+.plan-table { width: 100%; border-collapse: collapse; font-size: 28rpx; }
+.plan-table .tc { padding: 16rpx 20rpx; border-bottom: 1rpx solid var(--border); text-align: left; }
+.plan-table .th { color: var(--muted); font-weight: 500; font-size: 24rpx; }
+.plan-table .vb { color: var(--brand); font-weight: 700; }
+.warn {
+  margin-top: 24rpx; background: #FFF8E1; color: #7A5B00;
+  border: 1rpx solid #F0E0A8; border-radius: 20rpx; padding: 18rpx 26rpx; font-size: 26rpx;
+}
+.note { margin-top: 20rpx; font-size: 24rpx; color: var(--muted); }
+.audit { margin-top: 28rpx; }
+.audit-summary { color: var(--muted); font-size: 26rpx; }
+.audit-pre {
+  margin-top: 16rpx; font-size: 20rpx; color: var(--muted);
+  background: var(--bg); border: 1rpx solid var(--border); border-radius: 20rpx;
+  padding: 20rpx; word-break: break-all;
+}

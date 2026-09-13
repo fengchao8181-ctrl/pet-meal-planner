@@ -1,0 +1,51 @@
+<view class="page" wx:if="{{m}}">
+  <!-- 用心值情绪层 -->
+  <view class="card love-card">
+    <view class="love-title">本周用心值 💗</view>
+    <view class="love-num">{{m.loveScore}}</view>
+    <view class="love-note">这是你和{{petName}}一起认真爱它的第 {{m.streakDays}} 天</view>
+    <view class="love-toggle" bindtap="onToggleBreakdown">{{showBreakdown ? '收起口径' : '查看口径 ↕'}}</view>
+    <view class="love-caveat" wx:if="{{showBreakdown}}">{{m.breakdown}}</view>
+  </view>
+
+  <!-- 客观数据层 -->
+  <view class="card">
+    <view class="stat-row">
+      <view class="stat"><view class="stat-num">{{m.checkRate}}%</view><view class="stat-label">本周打卡</view></view>
+      <view class="stat"><view class="stat-num">{{m.avgExec == null ? '—' : m.avgExec + '%'}}</view><view class="stat-label">平均执行</view></view>
+      <view class="stat"><view class="stat-num">{{m.streakDays}}</view><view class="stat-label">连续天数</view></view>
+    </view>
+  </view>
+
+  <!-- 小结 -->
+  <view class="card">
+    <view class="block-title">🐾 {{petName}} 的小结</view>
+    <view class="summary">{{m.summary}}</view>
+    <view class="sub-note" wx:if="{{m.moodLabel}}">本周它最常「{{m.moodEmoji}} {{m.moodLabel}}」</view>
+  </view>
+
+  <!-- 体重趋势 -->
+  <view class="card" wx:if="{{m.weightPoints.length > 0}}">
+    <view class="block-title">⚖️ 体重记录</view>
+    <view class="weight-row" wx:for="{{m.weightPoints}}" wx:key="date">
+      <text>{{item.date}}</text><text class="vb">{{item.weightKg}} kg</text>
+    </view>
+  </view>
+
+  <!-- 下周建议 -->
+  <view class="card" wx:if="{{m.tips.length > 0}}">
+    <view class="block-title">📋 下周的小建议</view>
+    <view class="tips"><view wx:for="{{m.tips}}" wx:key="*this">· {{item}}</view></view>
+  </view>
+
+  <!-- 历史周报 -->
+  <view class="card" wx:if="{{history.length > 1}}">
+    <view class="block-title">📅 往期周报</view>
+    <view class="history-row" wx:for="{{history}}" wx:key="weekEnd">
+      <text>截至 {{item.weekEnd}}</text>
+      <text class="vb">{{item.loveScore}}</text>
+    </view>
+  </view>
+
+  <button class="btn btn-primary btn-full" bindtap="goCheckin">回去打卡</button>
+</view>

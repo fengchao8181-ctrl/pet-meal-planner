@@ -1,0 +1,16 @@
+.hidden { display: none; }
+
+/* 建档步骤进度条 */
+.stepper { display: flex; align-items: flex-start; padding: 10rpx 4rpx 30rpx; }
+.step { flex: 0 0 auto; width: 150rpx; display: flex; flex-direction: column; align-items: center; }
+.step-dot {
+  width: 52rpx; height: 52rpx; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26rpx; font-weight: 700;
+  background: #fff; border: 2rpx solid var(--border); color: var(--muted);
+}
+.step.active .step-dot { background: var(--brand); border-color: var(--brand); color: #fff; }
+.step.done .step-dot { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.step-label { margin-top: 10rpx; font-size: 23rpx; color: var(--muted); text-align: center; white-space: nowrap; }
+.step.active .step-label, .step.done .step-label { color: var(--brand); font-weight: 600; }
+.step-line { flex: 1; align-self: flex-start; height: 2rpx; background: var(--border); margin-top: 26rpx; }

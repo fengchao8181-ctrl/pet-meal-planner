@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/result/result",
+    "pages/subscribe/subscribe",
+    "pages/checkin/checkin",
+    "pages/report/report"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "宠物餐单定制",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFF7FA",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

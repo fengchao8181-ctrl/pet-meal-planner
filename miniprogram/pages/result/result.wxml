@@ -1,0 +1,78 @@
+<view class="page" wx:if="{{m}}">
+  <view class="card">
+    <view class="panel-title">{{m.title}}</view>
+    <view class="panel-sub">{{m.subtitle}}</view>
+
+    <view class="kcal-row">
+      <text>每日所需热量（DER）</text>
+      <text class="kcal-val">{{m.derKcal}} kcal</text>
+    </view>
+
+    <!-- 主粮建议 -->
+    <block wx:if="{{m.kibble}}">
+      <view class="block">
+        <view class="block-title">🍚 主粮建议（只给类型，不推荐品牌）</view>
+        <view class="advice-card">
+          <view>{{m.kibble.summary}}</view>
+          <view class="advice-tips">
+            <view wx:for="{{m.kibble.tips}}" wx:key="*this">· {{item}}</view>
+          </view>
+        </view>
+        <block wx:if="{{m.kibble.gramsPerDay}}">
+          <view class="note">按标签热量换算，主粮建议每日 {{m.kibble.gramsPerDay}} g（{{m.kibble.gramsNote}}）</view>
+        </block>
+      </view>
+    </block>
+
+    <!-- 辅食配方 -->
+    <block wx:if="{{m.supplement.length > 0}}">
+      <view class="block">
+        <view class="block-title">🥗 每周辅食配方（约占总热量 10%）</view>
+        <view class="plan-table">
+          <view class="tr">
+            <view class="tc th">食材</view><view class="tc th">每日克数</view><view class="tc th">功能方向</view>
+          </view>
+          <view class="tr" wx:for="{{m.supplement}}" wx:key="name">
+            <view class="tc">{{item.name}}</view><view class="tc vb">{{item.grams}} g</view><view class="tc">{{item.purpose}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 鲜食配方 -->
+    <block wx:if="{{m.freshMeals}}">
+      <view class="block">
+        <view class="block-title">{{m.mode == 'A' ? '🍖 每日鲜食配方' : '🥘 ' + m.freshTitle}}</view>
+        <view class="plan-table">
+          <view class="tr">
+            <view class="tc th">食材</view><view class="tc th">克数</view><view class="tc th">热量</view>
+          </view>
+          <view class="tr" wx:for="{{m.freshMeals}}" wx:key="name">
+            <view class="tc">{{item.name}}</view><view class="tc vb">{{item.grams}} g</view><view class="tc">{{item.kcal}} kcal</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="warn" wx:for="{{m.warnings}}" wx:key="*this">⚠️ {{item}}</view>
+
+    <view class="note">本餐单由规则引擎生成，正式执行前建议经执业兽医师审核；辅食食材均经过犬安全黑名单校验。</view>
+
+    <view class="audit">
+      <view class="audit-summary" bindtap="onToggleAudit">查看审计决策链（{{m.decisionsCount}} 条规则）▾</view>
+      <view class="audit-pre" wx:if="{{showAudit}}">{{auditText}}</view>
+    </view>
+  </view>
+
+  <view class="card locked-card">
+    <view class="locked-title">🔒 订阅后解锁</view>
+    <view class="locked-item" wx:for="{{lockedPerks}}" wx:key="*this">
+      <text class="locked-check">✓</text><text>{{item}}</text>
+    </view>
+    <view class="locked-note">基础餐单免费可用，进阶服务需订阅</view>
+  </view>
+
+  <button class="btn btn-primary btn-full" bindtap="goCheckin">开始每日喂食打卡 🐾</button>
+  <button class="btn btn-ghost btn-full" bindtap="goSubscribe">订阅解锁完整餐单与每日提醒</button>
+  <button class="btn btn-ghost btn-full" bindtap="goRestart">重新建档</button>
+</view>

@@ -1,0 +1,15 @@
+{
+  "name": "pet-meal-planner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "宠物餐单定制服务：三层喂养模式（纯鲜食/狗粮+辅食/混合）餐单生成系统，EdgeOne 云函数兼容架构",
+  "scripts": {
+    "start": "node src/server/app.js",
+    "dev": "node scripts/dev-server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

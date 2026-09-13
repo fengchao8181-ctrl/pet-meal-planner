@@ -1,0 +1,19 @@
+.love-card { background: linear-gradient(135deg, var(--brand), #E5458F); border-color: transparent; }
+.love-title { color: #FFF; font-size: 28rpx; opacity: 0.92; }
+.love-num { color: #FFF; font-size: 96rpx; font-weight: 800; line-height: 1.15; }
+.love-note { color: #FFF0F6; font-size: 26rpx; margin-top: 6rpx; }
+.love-toggle { color: #FFE3EF; font-size: 24rpx; margin-top: 18rpx; text-decoration: underline; }
+.love-caveat { color: #FFF; font-size: 24rpx; margin-top: 12rpx; opacity: 0.95; }
+
+.stat-row { display: flex; justify-content: space-between; }
+.stat { text-align: center; flex: 1; }
+.stat-num { font-size: 44rpx; font-weight: 800; color: var(--brand); }
+.stat-label { font-size: 24rpx; color: var(--muted); margin-top: 6rpx; }
+
+.summary { font-size: 28rpx; line-height: 1.7; }
+.sub-note { margin-top: 14rpx; font-size: 26rpx; color: var(--muted); }
+
+.weight-row, .history-row { display: flex; justify-content: space-between; padding: 14rpx 0; border-bottom: 1rpx solid var(--border); font-size: 28rpx; }
+.weight-row:last-child, .history-row:last-child { border-bottom: none; }
+.vb { color: var(--brand); font-weight: 700; }
+.tips { font-size: 28rpx; color: var(--text); line-height: 1.7; }

@@ -1,0 +1,45 @@
+<view class="page">
+  <!-- 今日主打卡卡 -->
+  <view class="card">
+    <view class="panel-title">今天喂{{petName}}了吗 🐾</view>
+    <view class="panel-sub">一记打卡，是它最期待的每日关心</view>
+
+    <view class="mood-row" wx:if="{{!checked}}">
+      <view class="mood-chip {{selMood == item.key ? 'on' : ''}}"
+            wx:for="{{moodOptions}}" wx:key="key"
+            data-key="{{item.key}}" bindtap="onMoodSelect">
+        <text class="mood-emoji">{{item.emoji}}</text>
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{!checked}}" class="btn btn-primary btn-full" bindtap="onCheckin">已喂 {{petName}}，打卡 ✨</view>
+    <view wx:if="{{checked}}" class="done-bar">✅ 今天已打卡，{{petName}} 很满足</view>
+    <view wx:if="{{feedback}}" class="feedback">{{feedback}}</view>
+  </view>
+
+  <!-- 连续天数 + 近 7 天 -->
+  <view class="card">
+    <view class="stat-row">
+      <view class="stat"><view class="stat-num">{{streak}}</view><view class="stat-label">连续打卡(天)</view></view>
+    </view>
+    <view class="grid">
+      <view class="cell {{item.checked ? 'on' : ''}} {{item.isToday ? 'today' : ''}}"
+            wx:for="{{grid}}" wx:key="date">
+        <text class="cell-emoji">{{item.checked ? (item.moodEmoji || '✓') : ''}}</text>
+        <text class="cell-day">{{item.isToday ? '今天' : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提醒授权占位 -->
+  <view class="card">
+    <view class="block-title">🔔 每日提醒</view>
+    <view class="note">开启后到喂食点提醒你，别让它等太久</view>
+    <button class="btn btn-ghost btn-full {{reminderOn ? 'on' : ''}}" bindtap="onEnableReminder">
+      {{reminderOn ? '已开启每日喂食提醒' : '开启每日喂食提醒'}}
+    </button>
+  </view>
+
+  <button class="btn btn-ghost btn-full" bindtap="onGoReport">查看本周健康周报 💗</button>
+</view>

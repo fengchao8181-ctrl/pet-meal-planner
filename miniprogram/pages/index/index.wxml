@@ -1,0 +1,110 @@
+<view class="page">
+  <view wx:if="{{error}}" class="error-bar">{{error}}</view>
+
+  <!-- 建档步骤进度条 -->
+  <view class="stepper">
+    <block wx:for="{{stepsList}}" wx:key="label">
+      <view class="step {{index == step ? 'active' : ''}} {{index < step ? 'done' : ''}}">
+        <view class="step-dot">{{index < step ? '✓' : index + 1}}</view>
+        <text class="step-label">{{item.label}}</text>
+      </view>
+      <view class="step-line" wx:if="{{index < stepsList.length - 1}}"></view>
+    </block>
+  </view>
+
+  <!-- 步骤 1：宠物档案 -->
+  <view class="card {{step == 1 ? '' : 'hidden'}}">
+    <view class="panel-title">先建一份宠物档案</view>
+    <view class="panel-sub">回答越多，餐单越准。约 1 分钟。</view>
+    <view class="form-grid">
+      <view class="f-item f-full">
+        <text class="f-label">宠物昵称</text>
+        <input value="{{form.petName}}" data-key="petName" bindinput="onFormInput" placeholder="如：豆豆" maxlength="20" />
+      </view>
+      <view class="f-item f-full">
+        <text class="f-label">品种</text>
+        <input value="{{form.breed}}" data-key="breed" bindinput="onFormInput" placeholder="如：金毛 / 中华田园犬" maxlength="20" />
+      </view>
+      <view class="f-item">
+        <text class="f-label">体重（kg）</text>
+        <input type="digit" value="{{form.weightKg}}" data-key="weightKg" bindinput="onFormInput" placeholder="如 8.5" />
+      </view>
+      <view class="f-item">
+        <text class="f-label">月龄</text>
+        <input type="number" value="{{form.ageMonths}}" data-key="ageMonths" bindinput="onFormInput" placeholder="如 24" />
+      </view>
+      <view class="f-item f-full">
+        <text class="f-label">生命阶段</text>
+        <view class="chips">
+          <view wx:for="{{stageOptionList}}" wx:key="value"
+                class="chip {{lifeStageIndex == index ? 'on' : ''}}"
+                data-idx="{{index}}" bindtap="onStageSelect">{{item.label}}</view>
+        </view>
+      </view>
+      <view class="f-item f-full">
+        <text class="f-label">活动量</text>
+        <view class="chips">
+          <view wx:for="{{activityOptionList}}" wx:key="value"
+                class="chip {{activityIndex == index ? 'on' : ''}}"
+                data-idx="{{index}}" bindtap="onActivitySelect">{{item.label}}</view>
+        </view>
+      </view>
+      <view class="f-item f-full">
+        <text class="f-label">是否已绝育</text>
+        <switch checked="{{form.neutered}}" bindchange="onNeuterChange" color="#D61F69" />
+      </view>
+      <view class="f-item f-full">
+        <text class="f-label">已知过敏史（可多选）</text>
+        <view class="chips">
+          <view wx:for="{{allergyOptions}}" wx:key="*this"
+                class="chip {{allergyMap[item] ? 'on' : ''}}"
+                data-value="{{item}}" bindtap="onAllergyTap">{{item}}</view>
+        </view>
+      </view>
+    </view>
+    <button class="btn btn-primary btn-full" bindtap="onProfileNext">下一步：选择喂养方式</button>
+  </view>
+
+  <!-- 步骤 2：喂养模式 + 主粮标签 -->
+  <view class="card {{step == 2 ? '' : 'hidden'}}">
+    <view class="panel-title">选择喂养方式</view>
+    <view class="panel-sub">三档并行：不换粮也能用，辅食不超每日热量 10%。</view>
+    <view class="mode-cards">
+      <view wx:for="{{modes}}" wx:key="key"
+            class="mode-card {{selectedMode == item.key ? 'on' : ''}}"
+            data-mode="{{item.key}}" bindtap="onModeTap">
+        <text class="m-name">{{item.name}}</text>
+        <text class="m-desc">{{item.desc}}</text>
+        <text class="m-tag">{{item.tag}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{showLabel}}" class="form-grid" style="margin-top:28rpx">
+      <view class="panel-sub f-full">主粮标签信息：已按「标准成犬粮」预填，可按包装背面实际值调整（粗蛋白或热量至少一项即可）</view>
+      <view class="f-item"><text class="f-label">粗蛋白 %</text>
+        <input type="digit" data-key="proteinPct" value="{{labelForm.proteinPct}}" placeholder="如 30" bindinput="onLabelInput" /></view>
+      <view class="f-item"><text class="f-label">粗脂肪 %</text>
+        <input type="digit" data-key="fatPct" value="{{labelForm.fatPct}}" placeholder="如 16" bindinput="onLabelInput" /></view>
+      <view class="f-item"><text class="f-label">粗纤维 %</text>
+        <input type="digit" data-key="fiberPct" value="{{labelForm.fiberPct}}" placeholder="如 4" bindinput="onLabelInput" /></view>
+      <view class="f-item"><text class="f-label">热量 kcal/100g</text>
+        <input type="number" data-key="kcalPer100g" value="{{labelForm.kcalPer100g}}" placeholder="如 380" bindinput="onLabelInput" /></view>
+      <view class="f-item f-full"><switch checked="{{labelForm.grainFree}}" bindchange="onGrainFree" color="#D61F69" /> 无谷粮</view>
+      <view class="f-item f-full">
+        <text class="f-label">想避开的蛋白源（可多选）</text>
+        <view class="chips">
+          <view wx:for="{{avoidOptions}}" wx:key="*this"
+                class="chip {{avoidMap[item] ? 'on' : ''}}"
+                data-value="{{item}}" bindtap="onAvoidTap">{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="btn btn-ghost" bindtap="onBack">上一步</button>
+      <button class="btn btn-primary {{generating ? 'btn-hover' : ''}}" bindtap="onGenerate">
+        {{generating ? '生成中…' : '生成我的餐单'}}
+      </button>
+    </view>
+  </view>
+</view>

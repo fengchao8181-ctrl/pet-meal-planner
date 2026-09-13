@@ -1,0 +1,9 @@
+.tr { display: flex; }
+.plan-table .tc { flex: 1; }
+.result-title { font-size: 32rpx; font-weight: 700; }
+
+.locked-card { margin-top: 24rpx; background: var(--brand-soft); border-color: var(--brand); }
+.locked-title { font-size: 30rpx; font-weight: 700; color: var(--brand); margin-bottom: 16rpx; }
+.locked-item { display: flex; align-items: center; gap: 12rpx; font-size: 27rpx; color: var(--text); margin: 8rpx 0; }
+.locked-check { color: var(--ok); font-weight: 700; }
+.locked-note { margin-top: 14rpx; font-size: 24rpx; color: var(--muted); }

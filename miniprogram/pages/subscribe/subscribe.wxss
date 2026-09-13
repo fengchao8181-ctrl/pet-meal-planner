@@ -1,0 +1,21 @@
+.row { display: flex; justify-content: space-between; align-items: center; }
+.price { display: flex; align-items: baseline; gap: 12rpx; }
+.p-yuan { color: var(--brand); font-size: 34rpx; font-weight: 700; }
+.p-per { color: var(--muted); font-size: 24rpx; }
+.p-orig { color: var(--muted); font-size: 24rpx; text-decoration: line-through; }
+
+.m-tag-row { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.m-badge { background: var(--brand); color: #fff; }
+
+.offer-banner {
+  background: linear-gradient(90deg, #D61F69, #EC5A8B);
+  color: #fff; border-radius: 28rpx; padding: 26rpx 30rpx;
+  display: flex; flex-direction: column; gap: 6rpx;
+  margin-bottom: 28rpx;
+}
+.offer-title { font-size: 32rpx; font-weight: 700; }
+.offer-sub { font-size: 25rpx; opacity: 0.95; }
+
+.trust-card { display: flex; flex-direction: column; gap: 16rpx; }
+.trust-item { display: flex; align-items: center; gap: 14rpx; font-size: 27rpx; color: var(--text); }
+.trust-check { color: var(--ok); font-weight: 700; }

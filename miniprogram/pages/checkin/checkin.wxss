@@ -1,0 +1,31 @@
+.mood-row { display: flex; flex-wrap: wrap; gap: 16rpx; margin-bottom: 20rpx; }
+.mood-chip {
+  display: flex; align-items: center; gap: 8rpx;
+  border: 1rpx solid var(--border); border-radius: 999rpx;
+  padding: 12rpx 22rpx; font-size: 26rpx; background: #fff;
+}
+.mood-chip.on { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.mood-emoji { font-size: 30rpx; }
+
+.done-bar {
+  background: var(--brand-soft); border-radius: 20rpx;
+  padding: 22rpx 28rpx; text-align: center;
+  color: var(--brand); font-weight: 700; margin-top: 8rpx;
+}
+.feedback { margin-top: 18rpx; font-size: 26rpx; color: var(--text); text-align: center; }
+
+.stat-row { display: flex; justify-content: center; margin-bottom: 24rpx; }
+.stat { text-align: center; }
+.stat-num { font-size: 64rpx; font-weight: 800; color: var(--brand); line-height: 1.1; }
+.stat-label { font-size: 24rpx; color: var(--muted); }
+
+.grid { display: flex; gap: 12rpx; }
+.cell {
+  flex: 1; height: 92rpx; border-radius: 18rpx;
+  border: 1rpx solid var(--border); background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.cell.on { background: var(--brand-soft); border-color: var(--brand); }
+.cell.today { border-style: dashed; }
+.cell-emoji { font-size: 32rpx; line-height: 1; }
+.cell-day { font-size: 18rpx; color: var(--muted); margin-top: 2rpx; }
