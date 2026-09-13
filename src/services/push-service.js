@@ -31,11 +31,24 @@ export class PushService {
       breed: breed != null ? breed : (cur.breed || null),
       miniOpenid: miniOpenid != null ? miniOpenid : (cur.miniOpenid || null),
       pref: { dailyH5: true, feedRemind: true, report: true, milestone: true, ...(cur.pref || {}), ...(pref || {}) },
+      quota: cur.quota != null ? cur.quota : 0,     // 小程序一次性订阅剩余可用次数（用一次扣一次）
+      quotaUsed: cur.quotaUsed || 0,
       createdAt: cur.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
     this.subscribers.set(sub.petKey, sub);
     return sub;
+  }
+
+  // 小程序端一次授权即 +1 名额（一次性订阅：发一次扣一次，客户点头就多一笔）
+  authorize({ petKey, count = 1 }) {
+    const s = this.getSubscriber(petKey);
+    if (!s) throw new PushDomainError('该宠物尚未订阅推送，请先开启每日推送', 'PUSH_NOT_SUBSCRIBED');
+    const n = Number(count) >= 0 ? Number(count) : 0;
+    s.quota = (s.quota || 0) + n;
+    s.updatedAt = new Date().toISOString();
+    this._log({ event: 'authorize' + (n > 0 ? '' : '_zero'), petKey, count: n, quota: s.quota, at: new Date().toISOString() });
+    return s;
   }
 
   getSubscriber(petKey) { return this.subscribers.get(petKey) || null; }
@@ -120,6 +133,7 @@ export class PushService {
     const sub = this.getSubscriber(petKey);
     if (!sub) { throw new PushDomainError('该宠物尚未订阅', 'PUSH_NOT_SUBSCRIBED'); }
     if (sub.pref[scene] === false) { throw new PushDomainError('该场景已关闭', 'PUSH_PREF_OFF'); }
+    if (!(sub.quota > 0)) { throw new PushDomainError('订阅名额已用完，请在小程序内再次授权', 'PUSH_QUOTA_EXHAUSTED'); }
     const snap = await this.snapshotFor(petKey);
     const content = pickDailyContent(snap);
     const res = await this.gateway.sendSubscribe({
@@ -128,7 +142,10 @@ export class PushService {
       page: page || 'pages/checkin/checkin',
       data: data || { thing1: { value: content.title.slice(0, 20) }, thing2: { value: content.body.slice(0, 30) } }
     });
-    this._log({ event: 'sent', key: `${sub.petKey}@${this.todayStr()}:${scene}`, petKey: sub.petKey, scene, channel: 'subscribe', at: new Date().toISOString(), wxErrCode: res && res.errcode });
+    sub.quota -= 1;             // 用一次扣一次（一次性订阅）
+    sub.quotaUsed = (sub.quotaUsed || 0) + 1;
+    sub.updatedAt = new Date().toISOString();
+    this._log({ event: 'sent', key: `${sub.petKey}@${this.todayStr()}:${scene}`, petKey: sub.petKey, scene, channel: 'subscribe', quotaLeft: sub.quota, at: new Date().toISOString(), wxErrCode: res && res.errcode });
     return res;
   }
 

@@ -27,9 +27,10 @@ global.wx = {
     const base = '127.0.0.1:3000';
     const url = new URL(o.url);
     const payload = JSON.stringify(o.data);
+    // 固定连本地 127.0.0.1:3000（后端监听 0.0.0.0，本机必达），不受 config.BASE_URL 真机 IP 影响
     const req = http.request({
-      host: url.hostname || base.split(':')[0],
-      port: url.port || base.split(':')[1],
+      host: '127.0.0.1',
+      port: 3000,
       path: url.pathname + url.search,
       method: o.method || 'GET',
       headers: { 'Content-Type': 'application/json' }

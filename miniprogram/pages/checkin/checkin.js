@@ -99,13 +99,23 @@ Page({
           wx.showToast({ title: '已开启每日推送，即将上线送达', icon: 'none' });
           return;
         }
-        // 小程序订阅消息（一次性）：再次补授权，拿下一次关键触达名额
+        // 小程序订阅消息（一次性）：弹授权弹窗，accept 即累加一次配额
         wx.requestSubscribeMessage({
           tmplIds: [templateId],
           success: function (res) {
-            self.setData({ reminderOn: res[templateId] === 'accept' });
-            wx.setStorageSync('reminder_accept', res[templateId] === 'accept');
-            wx.showToast({ title: res[templateId] === 'accept' ? '已开启每日喂食提醒' : '已登记每日推送', icon: 'none' });
+            var accepted = res[templateId] === 'accept';
+            self.setData({ reminderOn: accepted });
+            wx.setStorageSync('reminder_accept', accepted);
+            // 上报 accept 次数 → 后端 quota +1（用一次扣一次的基础名额）
+            if (accepted) {
+              api.post('/api/push/authorize', { petKey: self.data.petKey, count: 1 })
+                .then(function (r) {
+                  var quota = r && r.subscriber && r.subscriber.quota;
+                  if (quota != null) self.setData({ quotaLeft: quota });
+                })
+                .catch(function () { /* 后端未可及不阻断本地开启 */ });
+            }
+            wx.showToast({ title: accepted ? '已开启每日喂食提醒' : '已登记每日推送', icon: 'none' });
           }
         });
       })

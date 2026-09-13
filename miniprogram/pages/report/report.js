@@ -24,7 +24,23 @@ Page({
       .then(function (body) {
         var report = body.report;
         var breakdown = self.breakdownOf(report);
-        self.setData({ m: u.buildReportModel(report, breakdown) });
+        // D4 体重趋势：预计算每根柱子高度（相对最大值 %）+ 短日期（WXML 不做方法调用/===，全部预计算）
+        var wpts = (report && report.weightPoints || []).map(function (w) {
+          return { date: w.date, weightKg: w.weightKg, shortDate: w.date ? w.date.slice(5) : '', barH: w.barH || 40 };
+        });
+        var maxW = 0;
+        wpts.forEach(function (w) { if (w.weightKg > maxW) maxW = w.weightKg; });
+        if (maxW > 0) {
+          var floor = maxW * 0.9; // 以最大值9折为基准，让波动更可见
+          wpts = wpts.map(function (w) {
+            var h = Math.round(((w.weightKg - floor) / (maxW - floor || 1)) * 60 + 25); // 25%~85% 区间
+            w.barH = Math.max(20, Math.min(90, h));
+            return w;
+          });
+        }
+        var m = u.buildReportModel(report, breakdown);
+        m.weightPoints = wpts;
+        self.setData({ m: m });
       })
       .catch(function (err) {
         wx.showToast({ title: (err && err.message) || '周报加载失败', icon: 'none' });

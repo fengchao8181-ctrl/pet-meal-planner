@@ -17,3 +17,12 @@
 .weight-row:last-child, .history-row:last-child { border-bottom: none; }
 .vb { color: var(--brand); font-weight: 700; }
 .tips { font-size: 28rpx; color: var(--text); line-height: 1.7; }
+
+/* D4 体重趋势小柱图（纯 CSS，无画布依赖） */
+.trend-chart { display: flex; align-items: flex-end; justify-content: space-between; padding: 24rpx 8rpx 4rpx; }
+.trend-col { display: flex; flex-direction: column; align-items: center; width: 0; flex: 1; }
+.trend-bar-wrap { width: 44rpx; height: 150rpx; display: flex; align-items: flex-end; }
+.trend-bar { width: 44rpx; border-radius: 12rpx 12rpx 6rpx 6rpx; background: linear-gradient(180deg, var(--brand), #F587B8); min-height: 8rpx; }
+.trend-val { font-size: 22rpx; color: var(--brand); font-weight: 700; margin-top: 10rpx; }
+.trend-date { font-size: 20rpx; color: var(--muted); margin-top: 4rpx; }
+.trend-caption { font-size: 22rpx; color: var(--muted); text-align: center; margin-top: 12rpx; }

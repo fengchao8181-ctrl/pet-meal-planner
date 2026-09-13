@@ -18,6 +18,7 @@ import { createPushGatewayFromEnv } from '../services/push-gateway.js';
 import { PushService } from '../services/push-service.js';
 import { createAnalytics } from '../services/analytics.js';
 import { createAuthFromEnv } from '../services/auth-provider.js';
+import { IdentityService } from '../services/identity.js';
 
 const WEB_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'web');
 // 数据仓储：配置了飞书多维表格环境则用 FeishuRepository 持久化，否则退回内存 Mock（本地/演示）
@@ -38,6 +39,8 @@ const pushService = new PushService({ gateway: pushGateway, checkinStore });
 const analytics = await createAnalytics({ file: process.env.ANALYTICS_FILE || join(WEB_DIR, '../data/analytics-events.jsonl') });
 // 微信身份打通：配置 WX_APPID/WX_APP_SECRET 走官方 code2session(wechat)，否则降级生成本地稳定 openid(mock)
 const authProvider = createAuthFromEnv(process.env);
+// 双通道身份打通（小程序/公众号 openid 映射）：login 拿到 unionid 时自动归并；未登记则报 resolve 只回自身
+const identityService = new IdentityService();
 // 内部管理接口鉴权（/api/stats、/api/push/daily、/api/push/logs、/api/push/trigger 等）：
 // 生产建议配置 INTERNAL_KEY；未配置时这些接口裸奔（仅本地/Mock 用途，上线务必配置）。
 const INTERNAL_KEY = process.env.INTERNAL_KEY || null;
@@ -242,6 +245,14 @@ export async function handler(request) {
       return json({ ok: true, subscriber, gateway: pushGateway.name }, 201);
     }
 
+    // 小程序订阅授权上报：客户端 requestSubscribeMessage accept 后累加一次性名额
+    if (request.method === 'POST' && pathname === '/api/push/authorize') {
+      const body = await request.json();
+      const subscriber = pushService.authorize({ petKey: body.petKey, count: body.count });
+      analytics.track('push_authorize', { petKey: subscriber.petKey, count: Number(body.count) || 0, quota: subscriber.quota });
+      return json({ ok: true, subscriber, gateway: pushGateway.name });
+    }
+
     // 预览某宠物今日推送内容（不实际下发，供开发/联调查看内容挑选）
     if (request.method === 'GET' && pathname === '/api/push/preview') {
       const petKey = url.searchParams.get('petKey');
@@ -264,7 +275,25 @@ export async function handler(request) {
     if (request.method === 'POST' && pathname === '/api/auth/login') {
       const body = await request.json();
       const identity = await authProvider.code2session({ code: body.code, deviceId: body.deviceId });
+      // D2 打通：拿到 unionid 即登记进「小程序 openid ⇄ unionid」身份映射（后续公众号侧 openid 凭同一 unionid 自动归并）
+      if (identity.unionid) {
+        await identityService.linkChannels({ miniOpenid: identity.openid, unionid: identity.unionid });
+      }
       return json({ ok: true, auth: authProvider.name, ...identity });
+    }
+
+    // D2 身份查询/登记：给公众号网页侧 H5 用——凭「公众号 openid / unionid」绑定到同一客户，返回配对表
+    if (request.method === 'POST' && pathname === '/api/identity/link') {
+      const body = await request.json();
+      const rec = await identityService.linkChannels({ miniOpenid: body.miniOpenid, mpOpenid: body.mpOpenid, unionid: body.unionid });
+      analytics.track('identity_linked', { id: rec.id, unionid: !!rec.unionid });
+      return json({ ok: true, identity: identityService._shape(rec) });
+    }
+    if (request.method === 'GET' && pathname === '/api/identity/resolve') {
+      const openid = url.searchParams.get('openid');
+      const byUnionid = url.searchParams.get('unionid');
+      const rec = byUnionid ? await identityService.resolveByUnionid(byUnionid) : await identityService.resolve(openid);
+      return json({ ok: true, identity: rec });
     }
 
     // 小程序订阅消息触发（一次性，关键时机）：{petKey, scene, templateId?, page?}
@@ -312,6 +341,8 @@ export async function handler(request) {
 
     return json({ ok: false, error: 'not found' }, 404);
   } catch (err) {
+    // R7 配套：内部错误必须留痕（响应已脱敏，日志保排查），不向客户端泄露任何细节
+    console.error('[app] 请求失败', new URL(request.url).pathname, err.code || err.name, (err && err.message) || err);
     const code = err.code || 'INTERNAL';
     const status = code === 'PROFILE_INVALID' || code === 'SKU_NOT_FOUND' || code === 'CALLBACK_INVALID' || String(code).startsWith('CHECKIN_BAD') ? 400 : 500;
     // R7：仅对「客户端输入错误」回传具体 message；内部错误口径统一，避免向外部泄露实现细节与堆栈

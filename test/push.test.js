@@ -226,3 +226,31 @@ test('WechatH5PushGateway：退避中若有旧 token 则续命返回，不抛错
   const t = await g._accessToken();
   assert.equal(t, 'old_token', '退避中且有旧 token 时应续命返回，不抛错');
 });
+
+// ---------- D1：一次性订阅授权配额追踪（用一次扣一次，不足抛 quota 用尽）----------
+test('D1 authorize：未订阅抛错；accept 一次 +1，二次 +1 累加', () => {
+  const { service } = makeService();
+  assert.throws(() => service.authorize({ petKey: '麦麦|柯基' }), PushDomainError);
+
+  service.subscribe({ petKey: '麦麦|柯基', petName: '麦麦' });
+  const s1 = service.authorize({ petKey: '麦麦|柯基', count: 1 });
+  assert.equal(s1.quota, 1);
+  const s2 = service.authorize({ petKey: '麦麦|柯基', count: 2 });
+  assert.equal(s2.quota, 3);
+});
+
+test('D1 sendTrigger：用一次扣一次，名额归零后再触发抛 PUSH_QUOTA_EXHAUSTED', async () => {
+  const { service } = makeService([{ petKey: '豆豆|边牧', date: '2026-09-08' }], '2026-09-08T09:00:00');
+  service.subscribe({ petKey: '豆豆|边牧', petName: '豆豆', miniOpenid: 'o1' });
+  service.authorize({ petKey: '豆豆|边牧', count: 1 });
+
+  await service.sendTrigger({ petKey: '豆豆|边牧', scene: 'feeding_remind' });
+  const afterOne = service.getSubscriber('豆豆|边牧');
+  assert.equal(afterOne.quota, 0, '触发一次后名额减为 0');
+  assert.equal(afterOne.quotaUsed, 1);
+
+  await assert.rejects(
+    () => service.sendTrigger({ petKey: '豆豆|边牧', scene: 'feeding_remind' }),
+    (e) => e instanceof PushDomainError && e.code === 'PUSH_QUOTA_EXHAUSTED'
+  );
+});

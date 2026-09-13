@@ -26,10 +26,15 @@
 
   <!-- 体重趋势 -->
   <view class="card" wx:if="{{m.weightPoints.length > 0}}">
-    <view class="block-title">⚖️ 体重记录</view>
-    <view class="weight-row" wx:for="{{m.weightPoints}}" wx:key="date">
-      <text>{{item.date}}</text><text class="vb">{{item.weightKg}} kg</text>
+    <view class="block-title">⚖️ 体重趋势</view>
+    <view class="trend-chart">
+      <view class="trend-col" wx:for="{{m.weightPoints}}" wx:key="date">
+        <view class="trend-bar-wrap"><view class="trend-bar" style="height:{{item.barH}}%"></view></view>
+        <view class="trend-val">{{item.weightKg}}</view>
+        <view class="trend-date">{{item.shortDate}}</view>
+      </view>
     </view>
+    <view class="trend-caption">本周体重变化</view>
   </view>
 
   <!-- 下周建议 -->
