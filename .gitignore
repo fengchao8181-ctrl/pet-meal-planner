@@ -5,6 +5,8 @@ node_modules/
 src/data/
 *.jsonl
 
+# 微信开发者工具本地私有配置（机器相关，不入库）
+miniprogram/project.private.config.json
 
 # 含真实生产密钥的本地存档，禁止提交
 凭证登记-CREDENTIALS.md

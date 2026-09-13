@@ -118,7 +118,6 @@ function computeStreakLocal(records, ref) {
 
 module.exports = {
   MOOD_OPTIONS: MOOD_OPTIONS,
-  MILESTONE_NODES: MILESTONES,
   todayStr: todayStr,
   lastNDays: lastNDays,
   buildCheckinGrid: buildCheckinGrid,

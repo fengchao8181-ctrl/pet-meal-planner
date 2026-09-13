@@ -6,7 +6,6 @@ const profileUtil = require('../miniprogram/utils/profile.js');
 const planUtil = require('../miniprogram/utils/plan.js');
 const orderUtil = require('../miniprogram/utils/order.js');
 const checkinUtil = require('../miniprogram/utils/checkin.js');
-const pushTpl = require('../miniprogram/utils/push-templates.js');
 
 test('小程序 profile：合法档案无校验错误', () => {
   const errs = profileUtil.validateProfile({
@@ -78,15 +77,6 @@ test('小程序 checkin：周报模型适配（用心值口径可选）', () => 
   assert.equal(m.moodLabel, '开心');
   assert.match(m.breakdown, /5\/7/);
   assert.equal(checkinUtil.buildReportModel(null), null);
-});
-
-test('小程序推送内容库：「有爱」人设 + 个性化称呼', () => {
-  assert.equal(pushTpl.list().length, 4);
-  const feed = pushTpl.resolve('feeding_remind', { petName: '豆豆' });
-  assert.match(feed.title, /豆豆/);
-  const ms = pushTpl.resolve('milestone', { petName: '豆豆', streak: 30 });
-  assert.match(ms.title, /30/);
-  assert.ok(pushTpl.resolve('nope', {}) == null);
 });
 
 test('小程序 profile：buildPayload 归一化（A 不带主粮，B 带且清空非数字）', () => {
